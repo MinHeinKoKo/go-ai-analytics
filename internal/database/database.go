@@ -1,6 +1,7 @@
 package database
 
 import (
+	"ai-analytics/internal/config"
 	"context"
 	"fmt"
 	"log"
@@ -26,28 +27,35 @@ var (
 	//database = os.Getenv("BLUEPRINT_DB_DATABASE")
 )
 
-func New() Service {
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s", host, port)))
-
-	if err != nil {
-		log.Fatal(err)
-
-	}
-	return &service{
-		db: client,
-	}
-}
-
-func (s *service) Health() map[string]string {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+func New(config *config.Config) *mongo.Database {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	err := s.db.Ping(ctx, nil)
+	//Create the client options
+	clientOption := options.Client().ApplyURI(config.Database.URI)
+
+	//connect to Mongo
+	client, err := mongo.Connect(ctx, clientOption)
+
 	if err != nil {
-		log.Fatalf("db down: %v", err)
+		fmt.Printf("failed to connect to MongoDB: %v", err)
+		return nil
 	}
 
-	return map[string]string{
-		"message": "It's healthy",
+	// Test the connection
+	if err := client.Ping(ctx, nil); err != nil {
+		fmt.Printf("failed to ping MongoDB: %v", err)
+		return nil
 	}
+
+	db := client.Database(config.Database.Database)
+	log.Printf("Connected to MongoDB database: %s", config.Database.Database)
+
+	// Create indexes
+	// if err := createMongoIndexes(ctx, db); err != nil {
+	// 	fmt.Printf("failed to create MongoDB indexes: %v", err)
+	// 	return nil
+	// }
+
+	return db
 }

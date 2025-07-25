@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -9,21 +10,26 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
+	"ai-analytics/internal/config"
 	"ai-analytics/internal/database"
 )
 
 type Server struct {
 	port int
-
-	db database.Service
+	config *config.Config
 }
 
-func NewServer() *http.Server {
+func NewServer(config *config.Config) *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	NewServer := &Server{
 		port: port,
+		config: config,
+	}
 
-		db: database.New(),
+	mongoDB := database.New(config)
+	if mongoDB == nil {
+		log.Println("Error in connection mongodb")
+		return nil
 	}
 
 	// Declare Server config

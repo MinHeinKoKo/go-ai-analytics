@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"ai-analytics/internal/config"
 	"ai-analytics/internal/server"
 )
 
@@ -39,7 +40,9 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 
 func main() {
 
-	server := server.NewServer()
+	cfg := config.NewConfig()
+
+	server := server.NewServer(cfg)
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
