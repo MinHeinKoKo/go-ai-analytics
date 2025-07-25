@@ -1,12 +1,12 @@
 package server
 
 import (
+	"ai-analytics/internal/routes"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
-
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
@@ -18,12 +18,14 @@ func (s *Server) RegisterRoutes() http.Handler {
 		AllowCredentials: true, // Enable cookies/auth
 	}))
 
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"status":    "ok",
-			"databases": "This is healthy",
-		})
-	})
+	// Register health routes
+	routes.RegisterHealthRoutes(r)
+
+	// Register authentication routes
+	routes.RegisterAuthRoutes(r, s.db, s.config)
+
+	// Register protected routes
+	routes.RegisterProtectedRoutes(r, s.config)
 
 	return r
 }

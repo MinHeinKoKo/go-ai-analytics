@@ -52,10 +52,10 @@ func New(config *config.Config) *mongo.Database {
 	log.Printf("Connected to MongoDB database: %s", config.Database.Database)
 
 	// Create indexes
-	// if err := createMongoIndexes(ctx, db); err != nil {
-	// 	fmt.Printf("failed to create MongoDB indexes: %v", err)
-	// 	return nil
-	// }
+	if err := CreateIndexes(ctx, db); err != nil {
+		fmt.Printf("failed to create MongoDB indexes: %v", err)
+		return nil
+	}
 
 	return db
 }
