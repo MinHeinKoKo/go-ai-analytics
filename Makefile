@@ -61,4 +61,14 @@ watch:
             fi; \
         fi
 
-.PHONY: all build run test clean watch docker-run docker-down itest
+# Seed the database with sample data
+seed:
+	@echo "Seeding database..."
+	@go run seed/main.go
+
+# Seed with script (includes MongoDB check)
+seed-safe:
+	@chmod +x scripts/seed.sh
+	@./scripts/seed.sh
+
+.PHONY: all build run test clean watch docker-run docker-down itest seed seed-safe

@@ -1,31 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/auth'
 import { authApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Brain } from 'lucide-react'
+import { Brain, AlertCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isRegister, setIsRegister] = useState(false)
   const [name, setName] = useState('')
+  const [error, setError] = useState('')
   const router = useRouter()
-  const { login } = useAuthStore()
+  const { login, isAuthenticated, isLoading } = useAuthStore()
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      router.push('/')
+    }
+  }, [isAuthenticated, isLoading, router])
 
   const loginMutation = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       authApi.login(email, password),
     onSuccess: (data) => {
-      login(data.data.token, data.data.user)
+      setError('')
+      // Store both token and user data
+      login(data.data.token, {
+        id: data.data.user.id,
+        email: data.data.user.email,
+        name: data.data.user.name || data.data.user.email,
+      })
       router.push('/')
     },
     onError: (error: any) => {
-      alert(error.response?.data?.error || 'Login failed')
+      const errorMessage = error.response?.data?.error || 'Login failed. Please check your credentials.'
+      setError(errorMessage)
     },
   })
 
@@ -33,21 +48,48 @@ export default function LoginPage() {
     mutationFn: ({ email, password, name }: { email: string; password: string; name: string }) =>
       authApi.register(email, password, name),
     onSuccess: (data) => {
-      login(data.data.token, data.data.user)
+      setError('')
+      // Store both token and user data
+      login(data.data.token, {
+        id: data.data.user.id,
+        email: data.data.user.email,
+        name: data.data.user.name || name,
+      })
       router.push('/')
     },
     onError: (error: any) => {
-      alert(error.response?.data?.error || 'Registration failed')
+      const errorMessage = error.response?.data?.error || 'Registration failed. Please try again.'
+      setError(errorMessage)
     },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
+
     if (isRegister) {
+      if (!name.trim()) {
+        setError('Please enter your full name')
+        return
+      }
       registerMutation.mutate({ email, password, name })
     } else {
       loginMutation.mutate({ email, password })
     }
+  }
+
+  // Show loading spinner while checking auth state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  // Don't render login form if already authenticated
+  if (isAuthenticated) {
+    return null
   }
 
   return (
@@ -76,6 +118,13 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-red-500" />
+                <span className="text-sm text-red-700">{error}</span>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {isRegister && (
                 <div>
@@ -121,6 +170,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter your password"
+                  minLength={6}
                 />
               </div>
 

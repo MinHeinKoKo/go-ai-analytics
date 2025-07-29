@@ -1,25 +1,17 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuthStore } from '@/store/auth'
+import { useRequireAuth } from '@/hooks/useAuth'
 import Layout from '@/components/Layout'
 import Dashboard from '@/components/Dashboard'
 
 export default function Home() {
-  const { isAuthenticated } = useAuthStore()
-  const router = useRouter()
+  const { isReady } = useRequireAuth()
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login')
-    }
-  }, [isAuthenticated, router])
-
-  if (!isAuthenticated) {
+  // Show loading spinner while checking auth state
+  if (!isReady) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
       </div>
     )
   }

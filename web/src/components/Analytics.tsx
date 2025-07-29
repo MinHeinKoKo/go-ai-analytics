@@ -155,7 +155,7 @@ export default function Analytics() {
                 <div className="mt-4 p-4 bg-green-50 rounded-lg">
                   <h4 className="text-sm font-medium text-green-800 mb-2">Segmentation Results:</h4>
                   <div className="space-y-2">
-                    {segmentationMutation.data.data.segments.map((segment, index) => (
+                    {segmentationMutation?.data?.data?.segments?.map((segment, index) => (
                       <div key={index} className="text-sm">
                         <span className="font-medium">{segment.name}</span>: {segment.size} customers
                         <p className="text-xs text-muted-foreground">{segment.description}</p>
