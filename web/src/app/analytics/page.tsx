@@ -4,9 +4,9 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth'
 import Layout from '@/components/Layout'
-import Dashboard from '@/components/Dashboard'
+import Analytics from '@/components/Analytics'
 
-export default function Home() {
+export default function AnalyticsPage() {
   const { isAuthenticated } = useAuthStore()
   const router = useRouter()
 
@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <Dashboard />
+      <Analytics />
     </Layout>
   )
 }
