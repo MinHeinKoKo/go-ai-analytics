@@ -24,9 +24,9 @@ interface LayoutProps {
 const navigation = [
   { name: 'Dashboard', href: '/', icon: BarChart3 },
   { name: 'Analytics', href: '/analytics', icon: Brain },
-  { name: 'Customers', href: '/customers', icon: Users },
-  { name: 'Campaigns', href: '/campaigns', icon: Target },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  // { name: 'Customers', href: '/customers', icon: Users },
+  // { name: 'Campaigns', href: '/campaigns', icon: Target },
+  // { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 export default function Layout({ children }: LayoutProps) {
@@ -49,7 +49,7 @@ export default function Layout({ children }: LayoutProps) {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
         <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
           <div className="flex h-16 items-center justify-between px-4">
-            <h1 className="text-xl font-boldtext-primary">JumpStart <span className='text-xs'>AI Analytics</span></h1>
+            <h1 className="text-xl font-bold text-primary">JumpStart <span className='text-xs'>AI Analytics</span></h1>
             <Button
               variant="ghost"
               size="icon"

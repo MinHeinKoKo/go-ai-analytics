@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Test script for authentication endpoints
-BASE_URL="http://localhost:8080/api/v1"
+BASE_URL="http://localhost:8080/api"
 
 echo "🧪 Testing AI Analytics Authentication API"
 echo "=========================================="

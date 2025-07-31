@@ -199,13 +199,13 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            {/* <div className="mt-6 p-4 bg-blue-50 rounded-lg">
               <h4 className="text-sm font-medium text-blue-800 mb-2">Demo Credentials:</h4>
               <p className="text-xs text-blue-600">
                 Email: demo@example.com<br />
                 Password: demo123
               </p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>

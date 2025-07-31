@@ -11,6 +11,7 @@ import (
 
 func RegisterAnalyticsRoutes(router *gin.Engine, db *mongo.Database, config *config.Config) {
 	analyticsHandler := handlers.NewAnalyticsHandler(db, config)
+	dashboardHandler := handlers.NewDashboardStatsHandler(db, config)
 
 	// Public routes (for demo/testing)
 	public := router.Group("/api")
@@ -24,6 +25,10 @@ func RegisterAnalyticsRoutes(router *gin.Engine, db *mongo.Database, config *con
 	protected := router.Group("/api")
 	protected.Use(middleware.AuthMiddleware(config))
 	{
+
+		// stats managment
+		protected.GET("/dashboard-stats", dashboardHandler.GetRevenueTrend)
+
 		// Customer management
 		protected.POST("/customers", analyticsHandler.CreateCustomer)
 		protected.GET("/customers", analyticsHandler.GetCustomers)
