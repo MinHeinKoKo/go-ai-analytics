@@ -36,6 +36,12 @@ type Purchase struct {
 	CreatedAt    time.Time          `json:"created_at" bson:"created_at"`
 }
 
+type DailyRevenue struct {
+	Date    time.Time `json:"date" bson:"_id"` // _id will be the grouped date
+	Revenue float64   `json:"revenue" bson:"revenue"`
+}
+
+
 // MarketingCampaign represents marketing campaign data
 type MarketingCampaign struct {
 	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`

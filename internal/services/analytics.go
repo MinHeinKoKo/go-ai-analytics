@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"sort"
 	"time"
@@ -422,6 +423,7 @@ func (s *AnalyticsService) predictNextPurchase(customer models.Customer) models.
 func (s *AnalyticsService) OptimizeCampaign(ctx context.Context, req models.CampaignOptimizationRequest) (map[string]interface{}, error) {
 	// Get campaign performance data
 	collection := s.db.Collection("campaign_performance")
+	log.Printf("the id is %s : ", req.CampaignID)
 	cursor, err := collection.Find(ctx, bson.M{"campaign_id": req.CampaignID})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get campaign performance: %w", err)

@@ -24,9 +24,9 @@ interface LayoutProps {
 const navigation = [
   { name: 'Dashboard', href: '/', icon: BarChart3 },
   { name: 'Analytics', href: '/analytics', icon: Brain },
-  { name: 'Customers', href: '/customers', icon: Users },
-  { name: 'Campaigns', href: '/campaigns', icon: Target },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  // { name: 'Customers', href: '/customers', icon: Users },
+  // { name: 'Campaigns', href: '/campaigns', icon: Target },
+  // { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 export default function Layout({ children }: LayoutProps) {
@@ -49,7 +49,7 @@ export default function Layout({ children }: LayoutProps) {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
         <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
           <div className="flex h-16 items-center justify-between px-4">
-            <h1 className="text-xl font-bold">AI Analytics</h1>
+            <h1 className="text-xl font-bold text-primary">JumpStart <span className='text-xs'>AI Analytics</span></h1>
             <Button
               variant="ghost"
               size="icon"
@@ -86,7 +86,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 items-center px-4">
-            <h1 className="text-xl font-bold">AI Analytics</h1>
+            <h1 className="text-xl font-bold text-primary">JumpStart <span className='text-xs'>AI Analytics</span></h1>
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
             {navigation.map((item) => {
@@ -111,14 +111,19 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex-shrink-0 p-4 border-t border-gray-200">
             <div className="flex items-center">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                <p className="text-xs text-gray-500">{user?.email}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {user?.name || 'User'}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  {user?.email || 'user@example.com'}
+                </p>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
                 className="ml-2"
+                title="Logout"
               >
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -144,7 +149,7 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex flex-1"></div>
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               <span className="text-sm text-gray-500">
-                Welcome back, {user?.name}
+                Welcome back, {user?.name || 'User'}
               </span>
             </div>
           </div>
