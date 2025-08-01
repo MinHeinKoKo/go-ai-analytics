@@ -1,0 +1,11 @@
+customer_id,age,gender,location,income_range,registration_date,preferred_category
+CUST00001,25,Female,New York,$50k-$75k,2024-01-15,Fashion
+CUST00002,35,Male,California,$75k-$100k,2024-01-20,Electronics
+CUST00003,28,Female,Texas,$25k-$50k,2024-02-01,Home & Garden
+CUST00004,42,Male,Florida,$100k-$150k,2024-02-10,Automotive
+CUST00005,31,Female,Illinois,$75k-$100k,2024-02-15,Beauty
+CUST00006,29,Other,Washington,$50k-$75k,2024-03-01,Sports
+CUST00007,38,Male,Colorado,$100k-$150k,2024-03-05,Electronics
+CUST00008,26,Female,Arizona,$25k-$50k,2024-03-10,Fashion
+CUST00009,45,Male,Nevada,$150k+,2024-03-15,Automotive
+CUST00010,33,Female,Oregon,$75k-$100k,2024-03-20,Home & Garden

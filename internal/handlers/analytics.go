@@ -411,3 +411,71 @@ func (h *AnalyticsHandler) GenerateSampleData(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"sample_data": results})
 }
+
+// Advanced Customer Lifetime Value Prediction
+func (h *AnalyticsHandler) PredictLifetimeValue(c *gin.Context) {
+	customerID := c.Param("customerID")
+	if customerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Customer ID is required"})
+		return
+	}
+
+	prediction, err := h.analyticsService.PredictLifetimeValueAdvanced(c.Request.Context(), customerID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"prediction": prediction})
+}
+
+// Advanced Next Purchase Prediction
+func (h *AnalyticsHandler) PredictNextPurchase(c *gin.Context) {
+	customerID := c.Param("customerID")
+	if customerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Customer ID is required"})
+		return
+	}
+
+	prediction, err := h.analyticsService.PredictNextPurchaseAdvanced(c.Request.Context(), customerID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"prediction": prediction})
+}
+
+// Campaign Cost Minimization
+func (h *AnalyticsHandler) MinimizeCampaignCost(c *gin.Context) {
+	campaignID := c.Param("campaignID")
+	if campaignID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Campaign ID is required"})
+		return
+	}
+
+	optimization, err := h.analyticsService.MinimizeCampaignCost(c.Request.Context(), campaignID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"optimization": optimization})
+}
+
+// Campaign Conversion Maximization
+func (h *AnalyticsHandler) MaximizeCampaignConversions(c *gin.Context) {
+	campaignID := c.Param("campaignID")
+	if campaignID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Campaign ID is required"})
+		return
+	}
+
+	optimization, err := h.analyticsService.MaximizeCampaignConversions(c.Request.Context(), campaignID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"optimization": optimization})
+}

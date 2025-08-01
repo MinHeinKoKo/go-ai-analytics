@@ -46,5 +46,13 @@ func RegisterAnalyticsRoutes(router *gin.Engine, db *mongo.Database, config *con
 		protected.POST("/analytics/prediction", analyticsHandler.PredictCustomerBehavior)
 		protected.POST("/analytics/optimization", analyticsHandler.OptimizeCampaign)
 		protected.GET("/analytics/dashboard", analyticsHandler.GetDashboard)
+
+		// Advanced Customer Analytics
+		protected.GET("/analytics/customer/:customerID/ltv", analyticsHandler.PredictLifetimeValue)
+		protected.GET("/analytics/customer/:customerID/next-purchase", analyticsHandler.PredictNextPurchase)
+
+		// Advanced Campaign Analytics
+		protected.GET("/analytics/campaign/:campaignID/minimize-cost", analyticsHandler.MinimizeCampaignCost)
+		protected.GET("/analytics/campaign/:campaignID/maximize-conversions", analyticsHandler.MaximizeCampaignConversions)
 	}
 }

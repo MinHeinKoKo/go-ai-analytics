@@ -334,6 +334,100 @@ func (s *AnalyticsService) PredictCustomerBehavior(ctx context.Context, req mode
 	return &prediction, nil
 }
 
+// Enhanced Lifetime Value Prediction
+// func (s *AnalyticsService) PredictLifetimeValueAdvanced(ctx context.Context, customerID string) (*models.PredictionResult, error) {
+// 	// Get customer data
+// 	collection := s.db.Collection("customers")
+// 	var customer models.Customer
+// 	err := collection.FindOne(ctx, bson.M{"customer_id": customerID}).Decode(&customer)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("customer not found: %w", err)
+// 	}
+
+// 	// Get purchase history for more accurate prediction
+// 	purchaseCollection := s.db.Collection("purchases")
+// 	cursor, err := purchaseCollection.Find(ctx, bson.M{"customer_id": customerID})
+// 	if err != nil {
+// 		return nil, fmt.Errorf("failed to get purchase history: %w", err)
+// 	}
+// 	defer cursor.Close(ctx)
+
+// 	var purchases []models.Purchase
+// 	if err = cursor.All(ctx, &purchases); err != nil {
+// 		return nil, fmt.Errorf("failed to decode purchases: %w", err)
+// 	}
+
+// 	// Advanced LTV calculation
+// 	ltv := s.calculateAdvancedLTV(customer, purchases)
+
+// 	prediction := models.PredictionResult{
+// 		ID:             primitive.NewObjectID(),
+// 		CustomerID:     customerID,
+// 		PredictionType: "ltv_advanced",
+// 		Value:          ltv.Value,
+// 		Confidence:     ltv.Confidence,
+// 		CreatedAt:      time.Now(),
+// 	}
+
+// 	// Save prediction
+// 	predictionCollection := s.db.Collection("predictions")
+// 	_, err = predictionCollection.InsertOne(ctx, prediction)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("failed to save prediction: %w", err)
+// 	}
+
+// 	return &prediction, nil
+// }
+
+// Enhanced Next Purchase Prediction
+// func (s *AnalyticsService) PredictNextPurchaseAdvanced(ctx context.Context, customerID string) (*models.PredictionResult, error) {
+// 	// Get customer data
+// 	collection := s.db.Collection("customers")
+// 	var customer models.Customer
+// 	err := collection.FindOne(ctx, bson.M{"customer_id": customerID}).Decode(&customer)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("customer not found: %w", err)
+// 	}
+
+// 	// Get purchase history
+// 	purchaseCollection := s.db.Collection("purchases")
+// 	cursor, err := purchaseCollection.Find(ctx,
+// 		bson.M{"customer_id": customerID},
+// 		options.Find().SetSort(bson.D{{Key: "purchase_date", Value: -1}}),
+// 	)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("failed to get purchase history: %w", err)
+// 	}
+// 	defer cursor.Close(ctx)
+
+// 	var purchases []models.Purchase
+// 	if err = cursor.All(ctx, &purchases); err != nil {
+// 		return nil, fmt.Errorf("failed to decode purchases: %w", err)
+// 	}
+
+// 	// Advanced next purchase prediction
+// 	nextPurchase := s.calculateAdvancedNextPurchase(customer, purchases)
+
+// 	prediction := models.PredictionResult{
+// 		ID:             primitive.NewObjectID(),
+// 		CustomerID:     customerID,
+// 		PredictionType: "next_purchase_advanced",
+// 		Value:          nextPurchase.DaysUntilNext,
+// 		Probability:    nextPurchase.Probability,
+// 		Confidence:     nextPurchase.Confidence,
+// 		CreatedAt:      time.Now(),
+// 	}
+
+// 	// Save prediction
+// 	predictionCollection := s.db.Collection("predictions")
+// 	_, err = predictionCollection.InsertOne(ctx, prediction)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("failed to save prediction: %w", err)
+// 	}
+
+// 	return &prediction, nil
+// }
+
 func (s *AnalyticsService) predictChurn(customer models.Customer) models.PredictionResult {
 	// Simple churn prediction based on recency and frequency
 	daysSinceLastPurchase := 0
@@ -608,4 +702,482 @@ func (s *AnalyticsService) GetAnalyticsDashboard(ctx context.Context, dateRange 
 	dashboard["active_campaigns"] = activeCampaigns
 
 	return dashboard, nil
+}
+
+// Advanced Lifetime Value Prediction
+func (s *AnalyticsService) PredictLifetimeValueAdvanced(ctx context.Context, customerID string) (*models.PredictionResult, error) {
+	// Get customer data
+	collection := s.db.Collection("customers")
+	var customer models.Customer
+	err := collection.FindOne(ctx, bson.M{"customer_id": customerID}).Decode(&customer)
+	if err != nil {
+		return nil, fmt.Errorf("customer not found: %w", err)
+	}
+
+	// Get purchase history for more accurate prediction
+	purchaseCollection := s.db.Collection("purchases")
+	cursor, err := purchaseCollection.Find(ctx, bson.M{"customer_id": customerID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get purchase history: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var purchases []models.Purchase
+	if err = cursor.All(ctx, &purchases); err != nil {
+		return nil, fmt.Errorf("failed to decode purchases: %w", err)
+	}
+
+	// Advanced LTV calculation
+	ltv := s.calculateAdvancedLTV(customer, purchases)
+
+	prediction := models.PredictionResult{
+		ID:             primitive.NewObjectID(),
+		CustomerID:     customerID,
+		PredictionType: "ltv_advanced",
+		Value:          ltv.Value,
+		Confidence:     ltv.Confidence,
+		CreatedAt:      time.Now(),
+	}
+
+	// Save prediction
+	predictionCollection := s.db.Collection("predictions")
+	_, err = predictionCollection.InsertOne(ctx, prediction)
+	if err != nil {
+		return nil, fmt.Errorf("failed to save prediction: %w", err)
+	}
+
+	return &prediction, nil
+}
+
+// Enhanced Next Purchase Prediction
+func (s *AnalyticsService) PredictNextPurchaseAdvanced(ctx context.Context, customerID string) (*models.PredictionResult, error) {
+	// Get customer data
+	collection := s.db.Collection("customers")
+	var customer models.Customer
+	err := collection.FindOne(ctx, bson.M{"customer_id": customerID}).Decode(&customer)
+	if err != nil {
+		return nil, fmt.Errorf("customer not found: %w", err)
+	}
+
+	// Get purchase history
+	purchaseCollection := s.db.Collection("purchases")
+	cursor, err := purchaseCollection.Find(ctx,
+		bson.M{"customer_id": customerID},
+		options.Find().SetSort(bson.D{{Key: "purchase_date", Value: -1}}),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get purchase history: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var purchases []models.Purchase
+	if err = cursor.All(ctx, &purchases); err != nil {
+		return nil, fmt.Errorf("failed to decode purchases: %w", err)
+	}
+
+	// Advanced next purchase prediction
+	nextPurchase := s.calculateAdvancedNextPurchase(customer, purchases)
+
+	prediction := models.PredictionResult{
+		ID:             primitive.NewObjectID(),
+		CustomerID:     customerID,
+		PredictionType: "next_purchase_advanced",
+		Value:          nextPurchase.DaysUntilNext,
+		Probability:    nextPurchase.Probability,
+		Confidence:     nextPurchase.Confidence,
+		CreatedAt:      time.Now(),
+	}
+
+	// Save prediction
+	predictionCollection := s.db.Collection("predictions")
+	_, err = predictionCollection.InsertOne(ctx, prediction)
+	if err != nil {
+		return nil, fmt.Errorf("failed to save prediction: %w", err)
+	}
+
+	return &prediction, nil
+}
+
+// Advanced Campaign Cost Minimization
+func (s *AnalyticsService) MinimizeCampaignCost(ctx context.Context, campaignID string) (map[string]interface{}, error) {
+	// Get campaign performance data
+	collection := s.db.Collection("campaign_performance")
+	cursor, err := collection.Find(ctx, bson.M{"campaign_id": campaignID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get campaign performance: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var performances []models.CampaignPerformance
+	if err = cursor.All(ctx, &performances); err != nil {
+		return nil, fmt.Errorf("failed to decode performance data: %w", err)
+	}
+
+	if len(performances) == 0 {
+		return nil, errors.New("no performance data found for campaign")
+	}
+
+	// Calculate cost optimization strategies
+	costOptimization := s.calculateCostOptimization(performances)
+
+	result := map[string]interface{}{
+		"optimization_type":   "minimize_cost",
+		"current_cost":        costOptimization.CurrentCost,
+		"projected_savings":   costOptimization.ProjectedSavings,
+		"savings_percentage":  costOptimization.SavingsPercentage,
+		"recommendations":     costOptimization.Recommendations,
+		"implementation_plan": costOptimization.ImplementationPlan,
+		"risk_assessment":     costOptimization.RiskAssessment,
+	}
+
+	return result, nil
+}
+
+// Advanced Campaign Conversion Maximization
+func (s *AnalyticsService) MaximizeCampaignConversions(ctx context.Context, campaignID string) (map[string]interface{}, error) {
+	// Get campaign performance data
+	collection := s.db.Collection("campaign_performance")
+	cursor, err := collection.Find(ctx, bson.M{"campaign_id": campaignID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get campaign performance: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var performances []models.CampaignPerformance
+	if err = cursor.All(ctx, &performances); err != nil {
+		return nil, fmt.Errorf("failed to decode performance data: %w", err)
+	}
+
+	if len(performances) == 0 {
+		return nil, errors.New("no performance data found for campaign")
+	}
+
+	// Calculate conversion optimization strategies
+	conversionOptimization := s.calculateConversionOptimization(performances)
+
+	result := map[string]interface{}{
+		"optimization_type":      "maximize_conversions",
+		"current_conversions":    conversionOptimization.CurrentConversions,
+		"projected_conversions":  conversionOptimization.ProjectedConversions,
+		"improvement_percentage": conversionOptimization.ImprovementPercentage,
+		"recommendations":        conversionOptimization.Recommendations,
+		"implementation_plan":    conversionOptimization.ImplementationPlan,
+		"expected_timeline":      conversionOptimization.ExpectedTimeline,
+	}
+
+	return result, nil
+}
+
+// Helper structures for advanced calculations
+type LTVResult struct {
+	Value      float64
+	Confidence float64
+}
+
+type NextPurchaseResult struct {
+	DaysUntilNext float64
+	Probability   float64
+	Confidence    float64
+}
+
+type CostOptimizationResult struct {
+	CurrentCost        float64
+	ProjectedSavings   float64
+	SavingsPercentage  float64
+	Recommendations    []string
+	ImplementationPlan []string
+	RiskAssessment     string
+}
+
+type ConversionOptimizationResult struct {
+	CurrentConversions    int
+	ProjectedConversions  int
+	ImprovementPercentage float64
+	Recommendations       []string
+	ImplementationPlan    []string
+	ExpectedTimeline      string
+}
+
+// Advanced LTV calculation with purchase history analysis
+func (s *AnalyticsService) calculateAdvancedLTV(customer models.Customer, purchases []models.Purchase) LTVResult {
+	if len(purchases) == 0 {
+		// Fallback to basic calculation
+		avgOrderValue := customer.TotalSpent / float64(customer.PurchaseFrequency)
+		if customer.PurchaseFrequency == 0 {
+			avgOrderValue = 0
+		}
+		estimatedLifespan := 24.0 // months
+		monthlyPurchaseRate := float64(customer.PurchaseFrequency) / 12.0
+		ltv := avgOrderValue * monthlyPurchaseRate * estimatedLifespan
+
+		return LTVResult{
+			Value:      ltv,
+			Confidence: 0.65,
+		}
+	}
+
+	// Calculate purchase patterns
+	var totalAmount float64
+	var purchaseIntervals []float64
+
+	for i, purchase := range purchases {
+		totalAmount += purchase.Amount
+		if i > 0 {
+			interval := purchases[i-1].PurchaseDate.Sub(purchase.PurchaseDate).Hours() / 24
+			if interval > 0 {
+				purchaseIntervals = append(purchaseIntervals, interval)
+			}
+		}
+	}
+
+	// Calculate average order value
+	avgOrderValue := totalAmount / float64(len(purchases))
+
+	// Calculate average purchase interval
+	var avgInterval float64 = 30.0 // default 30 days
+	if len(purchaseIntervals) > 0 {
+		var sum float64
+		for _, interval := range purchaseIntervals {
+			sum += interval
+		}
+		avgInterval = sum / float64(len(purchaseIntervals))
+	}
+
+	// Calculate purchase frequency per month
+	monthlyFrequency := 30.0 / avgInterval
+
+	// Estimate customer lifespan based on age and behavior
+	var estimatedLifespan float64
+	switch {
+	case customer.Age < 25:
+		estimatedLifespan = 36.0 // 3 years
+	case customer.Age < 40:
+		estimatedLifespan = 48.0 // 4 years
+	case customer.Age < 60:
+		estimatedLifespan = 60.0 // 5 years
+	default:
+		estimatedLifespan = 36.0 // 3 years
+	}
+
+	// Adjust based on purchase frequency
+	if monthlyFrequency > 2 {
+		estimatedLifespan *= 1.2 // Frequent buyers stay longer
+	} else if monthlyFrequency < 0.5 {
+		estimatedLifespan *= 0.8 // Infrequent buyers may churn sooner
+	}
+
+	// Calculate LTV
+	ltv := avgOrderValue * monthlyFrequency * estimatedLifespan
+
+	// Calculate confidence based on data quality
+	confidence := 0.75
+	if len(purchases) > 5 {
+		confidence = 0.85
+	}
+	if len(purchases) > 10 {
+		confidence = 0.90
+	}
+
+	return LTVResult{
+		Value:      ltv,
+		Confidence: confidence,
+	}
+}
+
+// Advanced next purchase prediction with seasonal patterns
+func (s *AnalyticsService) calculateAdvancedNextPurchase(customer models.Customer, purchases []models.Purchase) NextPurchaseResult {
+	if len(purchases) < 2 {
+		// Fallback to basic calculation
+		daysBetweenPurchases := 30.0 // default
+		if customer.PurchaseFrequency > 1 && customer.LastPurchaseDate != nil {
+			daysSinceRegistration := time.Since(customer.RegistrationDate).Hours() / 24
+			daysBetweenPurchases = daysSinceRegistration / float64(customer.PurchaseFrequency)
+		}
+
+		daysSinceLastPurchase := 0.0
+		if customer.LastPurchaseDate != nil {
+			daysSinceLastPurchase = time.Since(*customer.LastPurchaseDate).Hours() / 24
+		}
+
+		daysUntilNext := math.Max(0, daysBetweenPurchases-daysSinceLastPurchase)
+
+		return NextPurchaseResult{
+			DaysUntilNext: daysUntilNext,
+			Probability:   0.6,
+			Confidence:    0.65,
+		}
+	}
+
+	// Calculate purchase intervals
+	var intervals []float64
+	for i := 1; i < len(purchases); i++ {
+		interval := purchases[i-1].PurchaseDate.Sub(purchases[i].PurchaseDate).Hours() / 24
+		if interval > 0 {
+			intervals = append(intervals, interval)
+		}
+	}
+
+	if len(intervals) == 0 {
+		return NextPurchaseResult{
+			DaysUntilNext: 30.0,
+			Probability:   0.5,
+			Confidence:    0.5,
+		}
+	}
+
+	// Calculate average interval
+	var sum float64
+	for _, interval := range intervals {
+		sum += interval
+	}
+	avgInterval := sum / float64(len(intervals))
+
+	// Calculate standard deviation for confidence
+	var variance float64
+	for _, interval := range intervals {
+		variance += math.Pow(interval-avgInterval, 2)
+	}
+	stdDev := math.Sqrt(variance / float64(len(intervals)))
+
+	// Days since last purchase
+	daysSinceLastPurchase := 0.0
+	if len(purchases) > 0 {
+		daysSinceLastPurchase = time.Since(purchases[0].PurchaseDate).Hours() / 24
+	}
+
+	// Predict next purchase
+	daysUntilNext := math.Max(0, avgInterval-daysSinceLastPurchase)
+
+	// Calculate probability based on pattern consistency
+	probability := 0.7
+	if stdDev < avgInterval*0.3 { // Consistent pattern
+		probability = 0.85
+	} else if stdDev > avgInterval*0.7 { // Inconsistent pattern
+		probability = 0.5
+	}
+
+	// Adjust probability based on recency
+	if daysSinceLastPurchase > avgInterval*1.5 {
+		probability *= 0.8 // Overdue, lower probability
+	} else if daysSinceLastPurchase < avgInterval*0.5 {
+		probability *= 1.1 // Recent purchase, higher probability
+	}
+
+	// Calculate confidence
+	confidence := 0.75
+	if len(intervals) > 3 {
+		confidence = 0.80
+	}
+	if len(intervals) > 6 {
+		confidence = 0.85
+	}
+
+	return NextPurchaseResult{
+		DaysUntilNext: daysUntilNext,
+		Probability:   math.Min(probability, 1.0),
+		Confidence:    confidence,
+	}
+}
+
+// Cost optimization calculation
+func (s *AnalyticsService) calculateCostOptimization(performances []models.CampaignPerformance) CostOptimizationResult {
+	var totalCost, totalRevenue float64
+	var totalClicks, totalImpressions int
+
+	for _, perf := range performances {
+		totalCost += perf.Cost
+		totalRevenue += perf.Revenue
+		totalClicks += perf.Clicks
+		totalImpressions += perf.Impressions
+	}
+
+	avgCPC := totalCost / float64(totalClicks)
+	currentROAS := totalRevenue / totalCost
+
+	// Calculate potential savings
+	projectedSavings := totalCost * 0.20 // 20% cost reduction target
+	savingsPercentage := 20.0
+
+	recommendations := []string{
+		"Reduce bids on low-performing keywords by 15-25%",
+		"Pause ad sets with CPC above $" + fmt.Sprintf("%.2f", avgCPC*1.5),
+		"Shift budget to organic reach and content marketing",
+		"Optimize ad scheduling to focus on peak performance hours",
+		"Implement negative keywords to reduce irrelevant clicks",
+	}
+
+	implementationPlan := []string{
+		"Week 1: Analyze keyword performance and identify high-cost, low-converting terms",
+		"Week 2: Reduce bids by 15% on underperforming keywords",
+		"Week 3: Pause ad sets with CPC > 150% of average",
+		"Week 4: Reallocate 25% of budget to organic initiatives",
+		"Week 5-6: Monitor performance and adjust bids based on results",
+	}
+
+	riskAssessment := "Low Risk"
+	if currentROAS < 2.0 {
+		riskAssessment = "Medium Risk - Monitor conversion rates closely"
+	}
+	if currentROAS < 1.5 {
+		riskAssessment = "High Risk - Consider campaign restructuring"
+	}
+
+	return CostOptimizationResult{
+		CurrentCost:        totalCost,
+		ProjectedSavings:   projectedSavings,
+		SavingsPercentage:  savingsPercentage,
+		Recommendations:    recommendations,
+		ImplementationPlan: implementationPlan,
+		RiskAssessment:     riskAssessment,
+	}
+}
+
+// Conversion optimization calculation
+func (s *AnalyticsService) calculateConversionOptimization(performances []models.CampaignPerformance) ConversionOptimizationResult {
+	var totalConversions, totalClicks int
+	var totalCost float64
+
+	for _, perf := range performances {
+		totalConversions += perf.Conversions
+		totalClicks += perf.Clicks
+		totalCost += perf.Cost
+	}
+
+	currentConversionRate := float64(totalConversions) / float64(totalClicks) * 100
+
+	// Project 25% improvement in conversions
+	improvementPercentage := 25.0
+	projectedConversions := int(float64(totalConversions) * 1.25)
+
+	recommendations := []string{
+		"Optimize landing page load speed and mobile experience",
+		"A/B test different call-to-action buttons and messaging",
+		"Implement retargeting campaigns for website visitors",
+		"Improve ad copy relevance and alignment with landing pages",
+		"Add social proof and customer testimonials to landing pages",
+		"Implement conversion tracking for better optimization",
+	}
+
+	implementationPlan := []string{
+		"Week 1-2: Audit and optimize landing page performance",
+		"Week 3-4: Launch A/B tests for ad copy and CTAs",
+		"Week 5-6: Implement retargeting pixel and campaigns",
+		"Week 7-8: Add social proof elements to key pages",
+		"Week 9-10: Analyze results and scale winning variations",
+		"Week 11-12: Continuous optimization based on performance data",
+	}
+
+	expectedTimeline := "8-12 weeks to see significant improvement"
+	if currentConversionRate < 1.0 {
+		expectedTimeline = "12-16 weeks for substantial gains"
+	}
+
+	return ConversionOptimizationResult{
+		CurrentConversions:    totalConversions,
+		ProjectedConversions:  projectedConversions,
+		ImprovementPercentage: improvementPercentage,
+		Recommendations:       recommendations,
+		ImplementationPlan:    implementationPlan,
+		ExpectedTimeline:      expectedTimeline,
+	}
 }

@@ -226,3 +226,49 @@ export const authApi = {
 
   getMe: () => api.get<{ user: any }>("/auth/me"),
 };
+
+// Import API
+export const importApi = {
+  // Get import templates and requirements
+  getImportTemplates: () =>
+    api.get<{ templates: any; general_guidelines: string[] }>(
+      "/import/templates"
+    ),
+
+  // Download sample CSV files
+  getSampleCSV: (type: string) =>
+    api.get(`/import/sample/${type}`, { responseType: "blob" }),
+
+  // Import CSV data
+  importCustomers: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/import/customers", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  importPurchases: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/import/purchases", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  importCampaigns: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/import/campaigns", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  importCampaignPerformance: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/import/performance", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+};
