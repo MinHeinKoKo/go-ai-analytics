@@ -14,7 +14,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Upload
 } from 'lucide-react'
 
 interface LayoutProps {
@@ -24,6 +25,7 @@ interface LayoutProps {
 const navigation = [
   { name: 'Dashboard', href: '/', icon: BarChart3 },
   { name: 'Analytics', href: '/analytics', icon: Brain },
+  { name: 'Import Data', href: '/import', icon: Upload },
   // { name: 'Customers', href: '/customers', icon: Users },
   // { name: 'Campaigns', href: '/campaigns', icon: Target },
   // { name: 'Settings', href: '/settings', icon: Settings },

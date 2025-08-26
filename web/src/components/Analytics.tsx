@@ -38,6 +38,35 @@ export default function Analytics() {
     mutationFn: analyticsApi.optimizeCampaign,
   })
 
+  // New mutations for the four advanced functions
+  const ltvMutation = useMutation({
+    mutationFn: (customerID: string) =>
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analytics/customer/${customerID}/ltv`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      }).then(res => res.json()),
+  })
+
+  const nextPurchaseMutation = useMutation({
+    mutationFn: (customerID: string) =>
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analytics/customer/${customerID}/next-purchase`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      }).then(res => res.json()),
+  })
+
+  const minimizeCostMutation = useMutation({
+    mutationFn: (campaignID: string) =>
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analytics/campaign/${campaignID}/minimize-cost`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      }).then(res => res.json()),
+  })
+
+  const maximizeConversionsMutation = useMutation({
+    mutationFn: (campaignID: string) =>
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analytics/campaign/${campaignID}/maximize-conversions`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      }).then(res => res.json()),
+  })
+
   const sampleDataMutation = useMutation({
     mutationFn: analyticsApi.generateSampleData,
     onSuccess: () => {
@@ -67,6 +96,27 @@ export default function Analytics() {
       campaign_id: selectedCampaign,
       objective: 'maximize_roas'
     })
+  }
+
+  // New handler functions
+  const handleLifetimeValuePrediction = () => {
+    if (!selectedCustomer) return
+    ltvMutation.mutate(selectedCustomer)
+  }
+
+  const handleNextPurchasePrediction = () => {
+    if (!selectedCustomer) return
+    nextPurchaseMutation.mutate(selectedCustomer)
+  }
+
+  const handleMinimizeCost = () => {
+    if (!selectedCampaign) return
+    minimizeCostMutation.mutate(selectedCampaign)
+  }
+
+  const handleMaximizeConversions = () => {
+    if (!selectedCampaign) return
+    maximizeConversionsMutation.mutate(selectedCampaign)
   }
 
   const customers = customersData?.data.customers || []
@@ -217,10 +267,10 @@ export default function Analytics() {
                   </p>
                   <Button
                     size="sm"
-                    variant="outline"
-                    disabled
+                    onClick={handleLifetimeValuePrediction}
+                    disabled={!selectedCustomer || ltvMutation.isPending}
                   >
-                    Coming Soon
+                    {ltvMutation.isPending ? 'Predicting...' : 'Predict LTV'}
                   </Button>
                 </div>
                 <div className="p-4 border rounded-lg">
@@ -230,21 +280,44 @@ export default function Analytics() {
                   </p>
                   <Button
                     size="sm"
-                    variant="outline"
-                    disabled
+                    onClick={handleNextPurchasePrediction}
+                    disabled={!selectedCustomer || nextPurchaseMutation.isPending}
                   >
-                    Coming Soon
+                    {nextPurchaseMutation.isPending ? 'Predicting...' : 'Predict Next Purchase'}
                   </Button>
                 </div>
               </div>
 
               {predictionMutation.isSuccess && (
                 <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="text-sm font-medium text-blue-800 mb-2">Prediction Results:</h4>
+                  <h4 className="text-sm font-medium text-blue-800 mb-2">Churn Prediction Results:</h4>
                   <div className="text-sm">
                     <p><span className="font-medium">Customer:</span> {predictionMutation.data.data.prediction.customer_id}</p>
                     <p><span className="font-medium">Churn Probability:</span> {(predictionMutation.data.data.prediction.probability * 100).toFixed(1)}%</p>
                     <p><span className="font-medium">Confidence:</span> {(predictionMutation.data.data.prediction.confidence * 100).toFixed(1)}%</p>
+                  </div>
+                </div>
+              )}
+
+              {ltvMutation.isSuccess && (
+                <div className="mt-4 p-4 bg-green-50 rounded-lg">
+                  <h4 className="text-sm font-medium text-green-800 mb-2">Lifetime Value Prediction:</h4>
+                  <div className="text-sm">
+                    <p><span className="font-medium">Customer:</span> {ltvMutation.data.prediction.customer_id}</p>
+                    <p><span className="font-medium">Predicted LTV:</span> ${ltvMutation.data.prediction.value.toFixed(2)}</p>
+                    <p><span className="font-medium">Confidence:</span> {(ltvMutation.data.prediction.confidence * 100).toFixed(1)}%</p>
+                  </div>
+                </div>
+              )}
+
+              {nextPurchaseMutation.isSuccess && (
+                <div className="mt-4 p-4 bg-orange-50 rounded-lg">
+                  <h4 className="text-sm font-medium text-orange-800 mb-2">Next Purchase Prediction:</h4>
+                  <div className="text-sm">
+                    <p><span className="font-medium">Customer:</span> {nextPurchaseMutation.data.prediction.customer_id}</p>
+                    <p><span className="font-medium">Days Until Next Purchase:</span> {Math.round(nextPurchaseMutation.data.prediction.value)} days</p>
+                    <p><span className="font-medium">Probability:</span> {(nextPurchaseMutation.data.prediction.probability * 100).toFixed(1)}%</p>
+                    <p><span className="font-medium">Confidence:</span> {(nextPurchaseMutation.data.prediction.confidence * 100).toFixed(1)}%</p>
                   </div>
                 </div>
               )}
@@ -301,10 +374,10 @@ export default function Analytics() {
                   </p>
                   <Button
                     size="sm"
-                    variant="outline"
-                    disabled
+                    onClick={handleMinimizeCost}
+                    disabled={!selectedCampaign || minimizeCostMutation.isPending}
                   >
-                    Coming Soon
+                    {minimizeCostMutation.isPending ? 'Optimizing...' : 'Minimize Cost'}
                   </Button>
                 </div>
                 <div className="p-4 border rounded-lg">
@@ -314,17 +387,17 @@ export default function Analytics() {
                   </p>
                   <Button
                     size="sm"
-                    variant="outline"
-                    disabled
+                    onClick={handleMaximizeConversions}
+                    disabled={!selectedCampaign || maximizeConversionsMutation.isPending}
                   >
-                    Coming Soon
+                    {maximizeConversionsMutation.isPending ? 'Optimizing...' : 'Maximize Conversions'}
                   </Button>
                 </div>
               </div>
 
               {optimizationMutation.isSuccess && (
                 <div className="mt-4 p-4 bg-purple-50 rounded-lg">
-                  <h4 className="text-sm font-medium text-purple-800 mb-2">Optimization Recommendations:</h4>
+                  <h4 className="text-sm font-medium text-purple-800 mb-2">ROAS Optimization Results:</h4>
                   <div className="text-sm space-y-2">
                     <div>
                       <span className="font-medium">Optimization Score:</span> {optimizationMutation.data.data.optimization.optimization_score}/100
@@ -333,6 +406,56 @@ export default function Analytics() {
                       <span className="font-medium">Recommendations:</span>
                       <ul className="list-disc list-inside mt-1 text-xs">
                         {optimizationMutation.data.data.optimization.recommendations?.map((rec: string, index: number) => (
+                          <li key={index}>{rec}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {minimizeCostMutation.isSuccess && (
+                <div className="mt-4 p-4 bg-red-50 rounded-lg">
+                  <h4 className="text-sm font-medium text-red-800 mb-2">Cost Minimization Results:</h4>
+                  <div className="text-sm space-y-2">
+                    <div>
+                      <span className="font-medium">Current Cost:</span> ${minimizeCostMutation.data.optimization.current_cost.toFixed(2)}
+                    </div>
+                    <div>
+                      <span className="font-medium">Projected Savings:</span> ${minimizeCostMutation.data.optimization.projected_savings.toFixed(2)} ({minimizeCostMutation.data.optimization.savings_percentage}%)
+                    </div>
+                    <div>
+                      <span className="font-medium">Risk Assessment:</span> {minimizeCostMutation.data.optimization.risk_assessment}
+                    </div>
+                    <div>
+                      <span className="font-medium">Recommendations:</span>
+                      <ul className="list-disc list-inside mt-1 text-xs">
+                        {minimizeCostMutation.data.optimization.recommendations?.map((rec: string, index: number) => (
+                          <li key={index}>{rec}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {maximizeConversionsMutation.isSuccess && (
+                <div className="mt-4 p-4 bg-teal-50 rounded-lg">
+                  <h4 className="text-sm font-medium text-teal-800 mb-2">Conversion Maximization Results:</h4>
+                  <div className="text-sm space-y-2">
+                    <div>
+                      <span className="font-medium">Current Conversions:</span> {maximizeConversionsMutation.data.optimization.current_conversions}
+                    </div>
+                    <div>
+                      <span className="font-medium">Projected Conversions:</span> {maximizeConversionsMutation.data.optimization.projected_conversions} (+{maximizeConversionsMutation.data.optimization.improvement_percentage}%)
+                    </div>
+                    <div>
+                      <span className="font-medium">Expected Timeline:</span> {maximizeConversionsMutation.data.optimization.expected_timeline}
+                    </div>
+                    <div>
+                      <span className="font-medium">Recommendations:</span>
+                      <ul className="list-disc list-inside mt-1 text-xs">
+                        {maximizeConversionsMutation.data.optimization.recommendations?.map((rec: string, index: number) => (
                           <li key={index}>{rec}</li>
                         ))}
                       </ul>
