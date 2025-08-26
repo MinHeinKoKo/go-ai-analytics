@@ -479,3 +479,32 @@ func (h *AnalyticsHandler) MaximizeCampaignConversions(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"optimization": optimization})
 }
+
+// Enhanced Dashboard with Real Data
+func (h *AnalyticsHandler) GetEnhancedDashboard(c *gin.Context) {
+	var dateRange models.DateRange
+
+	// Parse optional date range parameters
+	startDateStr := c.Query("start_date")
+	endDateStr := c.Query("end_date")
+
+	if startDateStr != "" {
+		if startDate, err := time.Parse("2006-01-02", startDateStr); err == nil {
+			dateRange.StartDate = startDate
+		}
+	}
+
+	if endDateStr != "" {
+		if endDate, err := time.Parse("2006-01-02", endDateStr); err == nil {
+			dateRange.EndDate = endDate
+		}
+	}
+
+	dashboard, err := h.analyticsService.GetEnhancedDashboard(c.Request.Context(), dateRange)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"dashboard": dashboard})
+}

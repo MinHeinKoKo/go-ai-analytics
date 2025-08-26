@@ -46,6 +46,7 @@ func RegisterAnalyticsRoutes(router *gin.Engine, db *mongo.Database, config *con
 		protected.POST("/analytics/prediction", analyticsHandler.PredictCustomerBehavior)
 		protected.POST("/analytics/optimization", analyticsHandler.OptimizeCampaign)
 		protected.GET("/analytics/dashboard", analyticsHandler.GetDashboard)
+		protected.GET("/analytics/dashboard/enhanced", analyticsHandler.GetEnhancedDashboard)
 
 		// Advanced Customer Analytics
 		protected.GET("/analytics/customer/:customerID/ltv", analyticsHandler.PredictLifetimeValue)

@@ -253,7 +253,7 @@ export default function DataImport() {
                 <Button
                   onClick={() => downloadSample('customers')}
                   variant="outline"
-                  className="w-full"
+                  className="w-full text-white"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download Sample CSV
@@ -388,7 +388,7 @@ export default function DataImport() {
                   </code>
                 </div>
                 <Button onClick={() => downloadSample('purchases')} variant="outline" className="w-full">
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="h-4 w-4 mr-2 text-white" />
                   Download Sample CSV
                 </Button>
               </CardContent>
