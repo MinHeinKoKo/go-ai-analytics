@@ -10,13 +10,37 @@ export const api = axios.create({
 });
 
 // Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("auth_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+  (config) => {
+    // Only access localStorage on client side
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("auth_token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
+
+// Handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token is invalid or expired
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("auth_token");
+        // Redirect to login page
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Types
 export interface Customer {
@@ -201,4 +225,50 @@ export const authApi = {
     }),
 
   getMe: () => api.get<{ user: any }>("/auth/me"),
+};
+
+// Import API
+export const importApi = {
+  // Get import templates and requirements
+  getImportTemplates: () =>
+    api.get<{ templates: any; general_guidelines: string[] }>(
+      "/import/templates"
+    ),
+
+  // Download sample CSV files
+  getSampleCSV: (type: string) =>
+    api.get(`/import/sample/${type}`, { responseType: "blob" }),
+
+  // Import CSV data
+  importCustomers: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/import/customers", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  importPurchases: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/import/purchases", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  importCampaigns: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/import/campaigns", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  importCampaignPerformance: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api.post("/import/performance", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
 };

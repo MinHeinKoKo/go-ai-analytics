@@ -2,12 +2,11 @@
 
 import { useRequireAuth } from '@/hooks/useAuth'
 import Layout from '@/components/Layout'
-import Analytics from '@/components/Analytics'
+import DataImport from '@/components/DataImport'
 
-export default function AnalyticsPage() {
+export default function ImportPage() {
   const { isReady } = useRequireAuth()
 
-  // Show loading spinner while checking auth state
   if (!isReady) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -18,7 +17,7 @@ export default function AnalyticsPage() {
 
   return (
     <Layout>
-      <Analytics />
+      <DataImport />
     </Layout>
   )
 }

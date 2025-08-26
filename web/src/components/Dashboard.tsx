@@ -9,12 +9,19 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Users, ShoppingCart, DollarSign, TrendingUp, Target, Brain } from 'lucide-react'
 
 export default function Dashboard() {
+  // Use enhanced dashboard API for real data
   const { data: dashboardData, isLoading } = useQuery({
-    queryKey: ['dashboard'],
-    queryFn: () => analyticsApi.getDashboard(),
+    queryKey: ['dashboard-enhanced'],
+    queryFn: async () => {
+      const token = localStorage.getItem('auth_token')
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analytics/dashboard/enhanced`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      return response.json()
+    },
   })
 
-  const dashboard = dashboardData?.data.dashboard
+  const dashboard = dashboardData?.dashboard
 
   if (isLoading) {
     return (
@@ -63,8 +70,8 @@ export default function Dashboard() {
     },
   ]
 
-  // Sample data for charts
-  const revenueData = [
+  // Real data from API or fallback to sample data
+  const revenueData = dashboard?.revenue_trend || [
     { month: 'Jan', revenue: 12000, customers: 120 },
     { month: 'Feb', revenue: 15000, customers: 150 },
     { month: 'Mar', revenue: 18000, customers: 180 },
@@ -73,13 +80,22 @@ export default function Dashboard() {
     { month: 'Jun', revenue: 28000, customers: 280 },
   ]
 
-  const segmentData = [
+  const customerGrowthData = dashboard?.customer_growth || [
+    { month: 'Jan', customers: 120 },
+    { month: 'Feb', customers: 150 },
+    { month: 'Mar', customers: 180 },
+    { month: 'Apr', customers: 220 },
+    { month: 'May', customers: 250 },
+    { month: 'Jun', customers: 280 },
+  ]
+
+  const segmentData = dashboard?.customer_segments || [
     { name: 'High Value', value: 30, color: '#8884d8' },
     { name: 'Medium Value', value: 45, color: '#82ca9d' },
     { name: 'Low Value', value: 25, color: '#ffc658' },
   ]
 
-  const campaignData = [
+  const campaignData = dashboard?.campaign_performance || [
     { name: 'Email', performance: 85, cost: 2000 },
     { name: 'Social Media', performance: 92, cost: 3500 },
     { name: 'Display Ads', performance: 78, cost: 4000 },
@@ -89,7 +105,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">AI Analytics Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-primary">AI Analytics Dashboard</h1>
         <p className="text-muted-foreground">
           Marketing & targeting insights powered by artificial intelligence
         </p>

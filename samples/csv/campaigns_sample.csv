@@ -1,0 +1,9 @@
+campaign_id,name,type,target_segment,budget,start_date,end_date,status
+CAMP0001,Summer Fashion Sale 2024,email,Fashion Lovers,5000.00,2024-06-01,2024-06-30,completed
+CAMP0002,Electronics Black Friday,social,Tech Enthusiasts,10000.00,2024-11-20,2024-11-30,completed
+CAMP0003,Spring Home Collection,display,Home Decorators,7500.00,2024-03-01,2024-03-31,completed
+CAMP0004,Beauty Month Special,influencer,Beauty Enthusiasts,15000.00,2024-05-01,2024-05-31,completed
+CAMP0005,Sports Equipment Sale,search,Sports Enthusiasts,8000.00,2024-04-01,2024-04-30,completed
+CAMP0006,Automotive Winter Deals,email,Car Owners,12000.00,2024-12-01,2024-12-31,active
+CAMP0007,New Year Fashion,social,Young Adults,6000.00,2025-01-01,2025-01-31,active
+CAMP0008,Valentine's Day Beauty,display,Women 25-40,9000.00,2025-02-01,2025-02-14,active
